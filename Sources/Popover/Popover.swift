@@ -39,6 +39,11 @@ public enum PopoverType: Int {
     case auto
 }
 
+
+public protocol PopoverProtocol: AnyObject {
+    func willDismiss()
+}
+
 open class Popover: UIView {
     
     // custom property
@@ -65,6 +70,8 @@ open class Popover: UIView {
     open var willDismissHandler: (() -> ())?
     open var didShowHandler: (() -> ())?
     open var didDismissHandler: (() -> ())?
+    
+    public weak var delegate: PopoverProtocol?
     
     public fileprivate(set) var blackOverlay: UIControl = UIControl()
     
@@ -226,6 +233,7 @@ open class Popover: UIView {
                 self.transform = CGAffineTransform(scaleX: 0.0001, y: 0.0001)
                 self.blackOverlay.alpha = 0
             }){ _ in
+                self.delegate?.willDismiss()
                 self.contentView.removeFromSuperview()
                 self.blackOverlay.removeFromSuperview()
                 self.removeFromSuperview()
